@@ -1,9 +1,9 @@
+"""Телеграм-бот для Домашки."""
 import logging
 import os
 import sys
 import time
 from http import HTTPStatus
-from typing import Dict, List
 
 import requests
 import telegram
@@ -89,12 +89,12 @@ def get_api_answer(timestamp):
 def check_response(response):
     """Проверяем ответ API."""
     keys = ("homeworks", "current_date")
-    if type(response) is Dict:
+    if type(response) is dict:
         for key in keys:
             if key not in response.keys():
                 message = "Отсутствуют ожидаемые ключи в ответе API."
                 raise Exception(message)
-            elif type(response["homeworks"]) is not List:
+            elif type(response["homeworks"]) is not list:
                 raise TypeError
             else:
                 return response["homeworks"]
