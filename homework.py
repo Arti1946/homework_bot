@@ -129,7 +129,7 @@ def main():
             api_response = get_api_answer(timestamp)
             check_response(api_response)
             homeworks = api_response["homeworks"]
-            if not homeworks[0]:
+            if len(homeworks) == 0:
                 message = "Нет новых работ"
                 send_message(bot, message)
                 logger.debug(message)
