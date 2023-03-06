@@ -140,10 +140,10 @@ def main():
                 if status is not None:
                     hw_status = homework["status"]
                     homework_name = homework["homework_name"]
-                    if homework_name not in HOMEWORKS_STATUSES:
-                        HOMEWORKS_STATUSES[homework_name] = hw_status
-                        send_message(bot, status)
-                    elif HOMEWORKS_STATUSES[homework_name] != hw_status:
+                    if (
+                        homework_name not in HOMEWORKS_STATUSES
+                        or HOMEWORKS_STATUSES[homework_name] != hw_status
+                    ):
                         HOMEWORKS_STATUSES[homework_name] = hw_status
                         send_message(bot, status)
                     else:
