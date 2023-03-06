@@ -133,6 +133,7 @@ def main():
                 message = "Нет новых работ"
                 send_message(bot, message)
                 logger.debug(message)
+                continue
             homework = homeworks[0]
             status = parse_status(homework)
             timestamp = api_response["current_date"]
