@@ -11,7 +11,7 @@ import telegram
 from dotenv import load_dotenv
 from telegram.error import TelegramError
 
-from exceptions import HomeworksErrors, KeyError, StatusCodeError
+from exceptions import HomeworksErrors, KeyError, StatusCodeError, RequestError
 
 load_dotenv()
 
@@ -79,7 +79,7 @@ def get_api_answer(timestamp: float) -> Dict:
             f"API-сервер возвращает код {response.status_code}"
         )
     except requests.RequestException as error:
-        logger.debug(error)
+        raise RequestError(error)
 
 
 def check_response(response: Dict) -> Dict:
@@ -94,8 +94,7 @@ def check_response(response: Dict) -> Dict:
         elif not isinstance(response["homeworks"], list):
             raise TypeError
         return response["homeworks"]
-    else:
-        raise TypeError
+    raise TypeError
 
 
 def parse_status(homework: Dict) -> str:
@@ -138,17 +137,15 @@ def main():
             status = parse_status(homework)
             timestamp = api_response["current_date"]
             if isinstance(status, str):
-                if status is not None:
-                    hw_status = homework["status"]
-                    homework_name = homework["homework_name"]
-                    if (
-                        homework_name not in HOMEWORKS_STATUSES
-                        or HOMEWORKS_STATUSES[homework_name] != hw_status
-                    ):
-                        HOMEWORKS_STATUSES[homework_name] = hw_status
-                        send_message(bot, status)
-                    else:
-                        logger.debug("Статус домашки не изменился")
+                hw_status = homework["status"]
+                homework_name = homework["homework_name"]
+                if (
+                    homework_name not in HOMEWORKS_STATUSES
+                    or HOMEWORKS_STATUSES[homework_name] != hw_status
+                ):
+                    HOMEWORKS_STATUSES[homework_name] = hw_status
+                    send_message(bot, status)
+                logger.debug("Статус домашки не изменился")
         except Exception as error:
             message = f"Сбой в работе программы: {error}"
             logger.error(message)
